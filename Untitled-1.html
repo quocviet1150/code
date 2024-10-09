@@ -1,0 +1,32 @@
+See context at <a href="https://stackoverflow.com/questions/72911664/">Stack Overflow</a>. (<a href="https://glitch.com/edit/#!/husky-imaginary-sale?path=index.html">source</a>)<br/>
+<button id="popup">Open popup on another screen</button>
+<div id="logger"></div>
+
+<script>
+function log(text) {
+  console.log(text);
+  logger.innerText += text + '\n';
+}
+
+popup.addEventListener('click', async () => {
+  try {
+    window.screenDetails = await window.getScreenDetails();
+  } catch {}
+  if (!window.screenDetails) {
+    log('API not supported or permission denied, skipping popup');
+    return;
+  }
+  if (!window.screenDetails.screens.length > 1) {
+    log('Single screen detected, skipping popup');
+    return;
+  }
+  const other = window.screenDetails.screens.find(s=>s!=window.screenDetails.currentScreen);
+  const width = 300;
+  const height = 300;
+  const left = other.availLeft + (other.availWidth / 2) - (width / 2);
+  const top = other.availTop + (other.availHeight / 2) - (height / 2);
+  const features = `left=${left},top=${top},width=${width},height=${height}`;
+  log(`Opening popup with features: '${features}'`);
+  window.open('about:blank', 'Popup', features);
+});
+</script>
